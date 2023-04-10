@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main-style.css">
+    <link rel="stylesheet" href="orders-style.css">
+    <title>Orders</title>
+</head>
+<body>
+    <!--layout-->
+    <div class="mainbox">
+        <p id="messageBox"> </p>
+        <!--For help-->
+        <input class="show" type="button" id="showSearch" value="Show Search">
+        <input class="show" type="button" id="hideSearch" value="Hide Search"><br><br>
+
+        <input class="show" type="button" id="showRows" value="Show Rows">
+        <input class="show" type="button" id="hideRows" value="Hide Rows"> <br> <br> 
+
+        <!--body get Orders-->
+        <div class="bodybox" id="getOrders">
+            
+            <!--header-->
+            <div class="headerbox">
+                <p id="logout">Log out</p>
+                <h2 id="welcome">Pick and Ship - Orders</h1> 
+            </div> 
+
+
+            <form>
+                <table class="search">
+                    <tr>
+                        <td><label class="search" for="ordernumber">Order number</label><br>
+                        <input class="search" type="text" id="ordernumber"></td>
+
+                        <td><label class="search" for="customer">Customer</label><br>
+                        <input class="search" type="text" id="customer"></td>
+
+                        <td><br><input class="search" type="button" id="search" value="Search"></td>
+                    </tr>
+                </table>
+
+            </form>
+
+            <p id="ordersBrowse">
+                
+            </p>
+        </div>
+
+        <!--body Order view-->
+        <div class="bodybox" id="viewOrderbox">
+
+            <!--header-->
+            <div class="headerbox">
+                <p id="logout">Log out</p>
+                <h2 id="welcome">Pick and Ship - Orders- Order lines</h1> 
+            </div> 
+
+
+            <form>
+                <table class="viewOrder">
+                    <tr>
+                        <td><label class="viewOrder" for="orderdetails">Order details</label><br>
+                        <input class="viewOrder" type="text" id="orderdetails"></td>
+
+                        <td><label class="viewOrder" for="addresses">Addresses</label><br>
+                        <input class="viewOrder" type="text" id="addresses"></td>
+
+                        <td>
+                            <label class="viewOrder" for="headerComment">Comment</label><br>
+                            <input class="viewOrder" type="text" id="headerComment">
+                            
+                            <br><input class="viewOrder" type="button" value="Save"></td>
+                    </tr>
+                </table>
+
+            </form>
+
+            <p>
+                Order 1
+            </p>
+        </div>
+
+
+
+
+
+    </div>
+
+    <script src="js-orders.js"></script>
+</body>
+</html>
