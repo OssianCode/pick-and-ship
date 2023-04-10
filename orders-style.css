@@ -34,7 +34,17 @@
     border: solid 1px;
     width: 100%;
   }
- p#logout{
+
+  th.order {
+    background-color: rgb(209, 219, 226);
+  }
+  tr:nth-child(odd).order {
+    background-color: rgb(183, 203, 216);
+  }
+  tr:nth-child(even).order {
+    background-color: rgb(227, 230, 231);
+  }
+ p#logout, #logout2{
     border: none;
     border-width: 1px;
     text-align: right;

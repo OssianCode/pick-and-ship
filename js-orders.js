@@ -130,6 +130,20 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
     // Table 
     table = document.createElement("table"); // create table element
 
+    row = document.createElement("tr"); // create header row
+
+    createTh("Order number");
+    createTh("Customer id");
+    createTh("Customer");
+    createTh("Delivery Date");
+    createTh("Items");
+    createTh("Collected");
+    createTh("Comment");
+    createTh("Select");
+
+    table.appendChild(row); // insert header row to table
+
+
     // print lines to table
     for(i = 0;i < ordersToShow.length; i++){
 
@@ -137,6 +151,7 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
         
         // CREATE tr ROW
         row = document.createElement("tr"); // create row
+        row.className = ("order");
 
         /*
         this.orderid = orderid;
@@ -154,6 +169,7 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
         createTd(ordersToShow[i].items);
         createTd(ordersToShow[i].collected);
         createTd(ordersToShow[i].comment);
+        createTdButton(ordersToShow[i].orderid);
 
         // Add ROW to table
         table.appendChild(row);
@@ -189,11 +205,36 @@ function createTd(dataTxt){
 
 }
 
+//Create open-button
+function createTdButton(dataTxt){
+
+    rcell = document.createElement("td"); // first td
+
+
+    let buttonElem = document.createElement("input");
+    buttonElem.setAttribute("type", "button");
+    buttonElem.setAttribute("class", "open");
+    buttonElem.setAttribute("value", "Open");
+    buttonElem.setAttribute("onclick", `openOrder(${dataTxt})`);
+
+    rcell.appendChild(buttonElem); // add node to td
+    row.appendChild(rcell); // add td to tr   */
+
+}
 function createTh(dataTxt){
     hcell = document.createElement("th"); // second header
     node1 = document.createTextNode(dataTxt); // insert text node
     hcell.appendChild(node1); // insert node to header cell
     row.appendChild(hcell); // insert header cell to header row 
+}
+
+
+function openOrder(orderid){
+    showRows();
+    hideSearch();
+
+    document.getElementById("orderRowWindow").innerHTML = orderid;
+
 }
 
 function clearBrowse() {
@@ -214,7 +255,7 @@ function clearAllBrowse() {
     deleteOrdersToShow();
 }
 
-//For testing ->
+
 function showSearch(){
     setDisplay('getOrders', 'block');
 }
@@ -229,6 +270,7 @@ function hideRows(){
     setDisplay('viewOrderbox', 'none');
 }
 
+
 /*Set display to div */
 function setDisplay(divId, displayOrNot){
     //console.log(`Set display divId: ${divId} ${displayOrNot}`);
@@ -238,11 +280,12 @@ function setDisplay(divId, displayOrNot){
     myDiv.style.display = displayOrNot;
     //console.log(`myDiv: ${myDiv.style.display} equals  ${displayOrNot}?`);
 }
-// <-For testing
-
 
 const myLogoutButton = document.getElementById('logout');
 myLogoutButton.addEventListener('click', logOut);
+
+const myLogout2Button = document.getElementById('logout2');
+myLogout2Button.addEventListener('click', logOut);
 
 const mySearchButton = document.getElementById('search');
 mySearchButton.addEventListener('click', listOrders);

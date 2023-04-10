@@ -41,7 +41,9 @@ label {
 input.login{
   width: 50%;
 }
-
+input[type=text],[type=password]{
+  background-color: rgb(153, 198, 240);
+}
 input[type=button]{
   float: right;
   width: 100px;
