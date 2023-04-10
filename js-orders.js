@@ -7,6 +7,7 @@ let token;
 let orders = [];
 let order = [];
 let ordersToShow = [];
+let items = [];
 let orderNumberSearch;
 let customerSearch;
 let table;
@@ -71,14 +72,21 @@ function listOrders(){
         .then(orders => listOrdersToTable(orders, orderNumberSearch, customerSearch));
 }
 
-function Order(orderid, customerid, customer, deliverydate, items, collected, comment){
+function Order(orderid, customerid, customer, deliverydate, items, itemsString, collected, 
+               comment, invaddr, delivaddr, respsalesperson, totalprice){
     this.orderid = orderid;
     this.customerid = customerid;
     this.customer = customer;
     this.deliverydate = deliverydate;
     this.items = items;
+    this.itemsString = itemsString;
     this.collected = collected;
     this.comment = comment;
+    this.invaddr = invaddr;
+    this.delivaddr = delivaddr;
+    this.respsalesperson = respsalesperson;
+    this.totalprice = totalprice;
+
 }
 
 
@@ -130,46 +138,41 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
     // Table 
     table = document.createElement("table"); // create table element
 
-    row = document.createElement("tr"); // create header row
-
-    createTh("Order number");
-    createTh("Customer id");
-    createTh("Customer");
-    createTh("Delivery Date");
-    createTh("Items");
-    createTh("Collected");
-    createTh("Comment");
-    createTh("Select");
-
-    table.appendChild(row); // insert header row to table
-
 
     // print lines to table
     for(i = 0;i < ordersToShow.length; i++){
 
         //console.log(`For ordersToShow ${i} ${ordersToShow[i].orderid}` );
         
+        if (i == 0){
+            row = document.createElement("tr"); // create header row
+            row.className = ("orderHeader");
+
+            createTh("Order number");
+            createTh("Customer id");
+            createTh("Customer");
+            createTh("Delivery Date");
+            createTh("Items");
+            createTh("Collected");
+            createTh("Customer comment");
+            createTh("Select");
+        
+            table.appendChild(row); // insert header row to table
+        }
+
         // CREATE tr ROW
         row = document.createElement("tr"); // create row
         row.className = ("order");
 
-        /*
-        this.orderid = orderid;
-        this.customerid = customerid;
-        this.customer = customer;
-        this.deliverydate = deliverydate;
-        this.items = items;
-        this.collected = collected;
-        this.comment = comment;*/
 
         createTd(ordersToShow[i].orderid);
         createTd(ordersToShow[i].customerid);
         createTd(ordersToShow[i].customer);
         createTd(ordersToShow[i].deliverydate);
-        createTd(ordersToShow[i].items);
+        createTd(ordersToShow[i].itemsString);
         createTd(ordersToShow[i].collected);
         createTd(ordersToShow[i].comment);
-        createTdButton(ordersToShow[i].orderid);
+        createTdButton(i);
 
         // Add ROW to table
         table.appendChild(row);
@@ -185,13 +188,31 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
 
 function createOrderRow(orders, i){
 
+    let itemsString = "";
+
+    /*get row items */
+    for(b = 0;b < orders[i].products.length; b++){
+        //console.log(`items ${b} ${orders[i].products[b].product}`);
+        if (b > 0){
+            itemsString += ", " + orders[i].products[b].product;
+        }
+        else {
+            itemsString = orders[i].products[b].product;
+        }
+    }
+
     const newOrder = new Order(orders[i].orderid, 
         orders[i].customerid, 
         orders[i].customer, 
         orders[i].deliverydate, 
-        "items XYZ", 
+        orders[i].products,
+        itemsString, 
         true,
-        orders[i].comment);
+        orders[i].comment,
+        orders[i].invaddr,
+        orders[i].delivaddr,
+        orders[i].respsalesperson,
+        orders[i].totalprice);
 
     ordersToShow.push(newOrder); 
 }
@@ -229,14 +250,6 @@ function createTh(dataTxt){
 }
 
 
-function openOrder(orderid){
-    showRows();
-    hideSearch();
-
-    document.getElementById("orderRowWindow").innerHTML = orderid;
-
-}
-
 function clearBrowse() {
     //clear browse
     document.getElementById('ordersBrowse').innerHTML = "";
@@ -253,6 +266,78 @@ function clearAllBrowse() {
     //clear Browse and Orders
     clearBrowse();
     deleteOrdersToShow();
+}
+
+
+/*ORDER LINES WINDOW OPEN*/
+function openOrder(oi){
+    showRows();
+    hideSearch();
+
+    document.getElementById("orderRowWindow").innerHTML = "items table";
+    document.getElementById("orderDetailsHeader").innerHTML = "";
+
+    /*order number
+    customer
+    customer id
+    delivery date
+    sales contact */
+
+    // Table 
+    table = document.createElement("table"); // create table element
+
+    var headers = ["Order Number", "Customer", "Customer id", "Delivery date", "Sales contact"];
+        
+    for(b = 0;b < headers.length; b++){
+
+        row = document.createElement("tr"); // create header row
+        row.className = ("orderDetails");
+        createTh(headers[b]);
+
+        switch (headers[b]){
+            case "Order Number":
+                createTd(ordersToShow[oi].orderid) 
+                break;
+            case "Customer":
+                createTd(ordersToShow[oi].customer);
+                break;
+            case "Customer id":
+                createTd(ordersToShow[oi].customerid);
+                break;
+            case "Delivery date":
+                createTd(ordersToShow[oi].deliverydate);
+                break;
+            case "Sales contact":
+                createTd(ordersToShow[oi].respsalesperson);
+                break;
+        }
+
+        table.appendChild(row); // insert header row to table
+
+    }
+    // print table to right div
+    const element = document.getElementById("orderDetailsHeader");
+    element.appendChild(table);
+
+
+    /*billing address
+    delivery address*/
+    document.getElementById("orderAddressesHeader").innerHTML = 
+    `<b>Billing address</b><br>
+    ${ordersToShow[oi].invaddr}<br><br>
+    <b>Delivery address</b><br>
+    ${ordersToShow[oi].delivaddr}`;
+
+    //Customer comment
+    document.getElementById("orderCommentHeader").innerHTML = ordersToShow[oi].comment;
+
+
+}
+
+function returnToBrowse(){
+
+    showSearch();
+    hideRows();
 }
 
 
@@ -290,6 +375,8 @@ myLogout2Button.addEventListener('click', logOut);
 const mySearchButton = document.getElementById('search');
 mySearchButton.addEventListener('click', listOrders);
 
+const myReturnButton = document.getElementById('return');
+myReturnButton.addEventListener('click', returnToBrowse);
 
 //For testing ->
 const myShowSearchButton = document.getElementById('showSearch');

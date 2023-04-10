@@ -25,7 +25,14 @@
     float: left;
     width: 200px;
   }
-
+  input[type=button].linesHeader{
+    float: left;
+    width: 200px;
+  }
+  input[type=button].viewOrder{
+    float: left;
+    width: 100px;
+  }
   table.search {
     border: solid 1px;
     width: 80%;
@@ -34,16 +41,32 @@
     border: solid 1px;
     width: 100%;
   }
-
-  th.order {
-    background-color: rgb(209, 219, 226);
+  td.viewOrder {
+    border: solid 1px;
+    width: 33%;
+    height: 100%;
   }
-  tr:nth-child(odd).order {
+  div#orderDetailsHeader, #orderAddressesHeader, #orderCommentHeader {
+    background-color: rgb(153, 198, 240);
+    width: 90%;
+    height: 100%;
+}
+
+  tr:nth-child(even).order {
     background-color: rgb(183, 203, 216);
   }
-  tr:nth-child(even).order {
+  tr:nth-child(odd).order {
     background-color: rgb(227, 230, 231);
   }
+  tr.orderHeader {
+    background-color: rgb(202, 216, 219);
+    text-align: left;
+    vertical-align: top;
+  }
+  tr.orderDetails{
+    text-align: left;
+  }
+
  p#logout, #logout2{
     border: none;
     border-width: 1px;
@@ -52,6 +75,7 @@
     float: inline-end;
     padding-right: 5px;
  }
+
 
   /*Main section*/
   div.mainbox {

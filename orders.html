@@ -55,7 +55,7 @@
             <!--header-->
             <div class="headerbox">
                 <p id="logout2">Log out</p>
-                <h2 id="welcome">Pick and Ship - Orders- Order lines</h1> 
+                <h2 id="welcome">Pick and Ship - Orders - Order lines</h1> 
                 <input class="linesHeader" type="button" id="return" value="Return">
                 <input class="linesHeader" type="button" id="print" value="Print">
 
@@ -66,17 +66,29 @@
             <form>
                 <table class="viewOrder">
                     <tr>
-                        <td><label class="viewOrder" for="orderdetails">Order details</label><br>
-                        <input class="viewOrder" type="text" id="orderdetails"></td>
+                        <td class="viewOrder">
+                            <label class="viewOrder" for="orderDetailsHeader">Order details</label><br>
+                            <div id="orderDetailsHeader">
 
-                        <td><label class="viewOrder" for="addresses">Addresses</label><br>
-                        <input class="viewOrder" type="text" id="addresses"></td>
+                            </div>
+                    
+                        </td>
 
-                        <td>
-                            <label class="viewOrder" for="headerComment">Comment</label><br>
-                            <input class="viewOrder" type="text" id="headerComment">
+                        <td class="viewOrder">
+                            <label class="viewOrder" for="orderAddressesHeader">Addresses</label><br>
+
+                            <div id="orderAddressesHeader">
                             
-                            <br><input class="viewOrder" type="button" value="Save"></td>
+                            </div>
+                    
+                        </td>
+
+                        <td class="viewOrder">
+                            <label class="viewOrder" for="orderCommentHeader">Customer comment</label><br>
+
+                            <div id="orderCommentHeader">
+                            
+                            </div>
                     </tr>
                 </table>
 
