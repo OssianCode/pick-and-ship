@@ -33,6 +33,11 @@
     float: left;
     width: 100px;
   }
+  input[type=button].saveComment{
+    float: right;
+    width: 100px;
+  }
+
   table.search {
     border: solid 1px;
     width: 80%;
@@ -40,18 +45,23 @@
   table.viewOrder {
     border: solid 1px;
     width: 100%;
+    
   }
   td.viewOrder {
     border: solid 1px;
     width: 33%;
     height: 100%;
+    vertical-align: top;
   }
-  div#orderDetailsHeader, #orderAddressesHeader, #orderCommentHeader {
+  #orderDetailsHeader, #orderAddressesHeader, #orderCommentHeader {
     background-color: rgb(153, 198, 240);
     width: 90%;
-    height: 100%;
+    min-height: 200px;
 }
 
+tr.order{
+    vertical-align: top;
+}
   tr:nth-child(even).order {
     background-color: rgb(183, 203, 216);
   }
@@ -67,7 +77,7 @@
     text-align: left;
   }
 
- p#logout, #logout2{
+ p#logout, p#logout2{
     border: none;
     border-width: 1px;
     text-align: right;
@@ -124,11 +134,11 @@
 
     /*view Orders*/
   div#viewOrderbox{
-        display: none;
+        display: none /*block*/;
     }  
 
     /*search Orders*/
  div#getOrders{
 
-        display: block;
+        display: /*none */ block;
     }  

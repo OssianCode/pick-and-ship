@@ -36,7 +36,7 @@
                         <input class="search" type="text" id="ordernumber"></td>
 
                         <td><label class="search" for="customer">Customer</label><br>
-                        <input class="search" type="text" id="customer"></td>
+                        <input class="search" type="text" id="customer" ></td>
 
                         <td><br><input class="search" type="button" id="search" value="Search"></td>
                     </tr>
@@ -56,47 +56,47 @@
             <div class="headerbox">
                 <p id="logout2">Log out</p>
                 <h2 id="welcome">Pick and Ship - Orders - Order lines</h1> 
-                <input class="linesHeader" type="button" id="return" value="Return">
-                <input class="linesHeader" type="button" id="print" value="Print">
-
-
             </div> 
 
+            <!--Todo: fix positioning and style-->
+            <input class="linesHeader" type="button" id="return" value="Return">
+            <input class="linesHeader" type="button" id="print" value="Print"><br><br>
 
-            <form>
-                <table class="viewOrder">
-                    <tr>
-                        <td class="viewOrder">
-                            <label class="viewOrder" for="orderDetailsHeader">Order details</label><br>
-                            <div id="orderDetailsHeader">
+            <table class="viewOrder">
+                <tr>
+                    <td class="viewOrder">
+                        <label class="viewOrder" for="orderDetailsHeader">Order details</label><br>
+                        <div id="orderDetailsHeader">
 
-                            </div>
-                    
-                        </td>
+                        </div>
+                
+                    </td>
 
-                        <td class="viewOrder">
-                            <label class="viewOrder" for="orderAddressesHeader">Addresses</label><br>
+                    <td class="viewOrder">
+                        <label class="viewOrder" for="orderAddressesHeader">Addresses</label><br>
 
-                            <div id="orderAddressesHeader">
-                            
-                            </div>
-                    
-                        </td>
+                        <div id="orderAddressesHeader">
+                        
+                        </div>
+                
+                    </td>
 
-                        <td class="viewOrder">
-                            <label class="viewOrder" for="orderCommentHeader">Customer comment</label><br>
+                    <td class="viewOrder">
+                        <label class="viewOrder" for="orderCommentHeader">Customer comment</label><br>
 
-                            <div id="orderCommentHeader">
-                            
-                            </div>
-                    </tr>
-                </table>
+                        <div id="orderCommentHeader">
+                        
+                        </div>
+                    </td>
 
-            </form>
+                </tr>
+            </table>
+
 
             <p id="orderRowWindow"></p>
                 
             </p>
+            <input class="saveComment" type="button" id="saveComment" value="Save">
         </div>
 
 

@@ -274,7 +274,7 @@ function openOrder(oi){
     showRows();
     hideSearch();
 
-    document.getElementById("orderRowWindow").innerHTML = "items table";
+    document.getElementById("orderRowWindow").innerHTML = "";
     document.getElementById("orderDetailsHeader").innerHTML = "";
 
     /*order number
@@ -332,7 +332,77 @@ function openOrder(oi){
     document.getElementById("orderCommentHeader").innerHTML = ordersToShow[oi].comment;
 
 
+    printLines(oi);
+
 }
+
+
+function printLines(oi){
+
+    // Table 
+    table = document.createElement("table"); // create table element
+
+    // print lines to table
+    for(b = 0;b < ordersToShow[oi].items.length; b++){
+
+        //console.log(`For item lines ${b} ${ordersToShow[oi].items[b].product}`);
+        
+        if (b == 0){
+            row = document.createElement("tr"); // create header row
+            row.className = ("orderHeader");
+
+            createTh("Item");
+            createTh("Supplier code");
+            createTh("Name");
+            createTh("Description");
+            createTh("Shelf");
+            createTh("Unit price");
+            createTh("Amount");
+            createTh("Collected");
+            createTh("Fully collected");
+            createTh("Comment");
+        
+            table.appendChild(row); // insert header row to table
+        }
+
+        // CREATE tr ROW
+        row = document.createElement("tr"); // create row
+        row.className = ("order");
+
+        createTd(ordersToShow[oi].items[b].code);
+        createTd(ordersToShow[oi].items[b].suppliercode);
+        createTd(ordersToShow[oi].items[b].product);
+        createTd(ordersToShow[oi].items[b].description);
+        createTd(ordersToShow[oi].items[b].shelf_pos);
+        createTd(ordersToShow[oi].items[b].unit_price);
+        createTd(ordersToShow[oi].items[b].qty);
+        createTd("5"); // TODO input
+        createTd(true); // todo checkbox
+        createTd("Add comment here"); // todo input
+
+        // Add ROW to table
+        table.appendChild(row);
+
+    }
+
+    // print table to right div
+    const element = document.getElementById("orderRowWindow");
+    element.appendChild(table);
+
+
+}
+
+//TODO SAVE
+function saveComment(){
+
+    console.log("SAVE!");
+}
+
+//TODO PRINT
+function sendToPrinter(){
+    console.log("PRINT!");
+}
+
 
 function returnToBrowse(){
 
@@ -377,6 +447,41 @@ mySearchButton.addEventListener('click', listOrders);
 
 const myReturnButton = document.getElementById('return');
 myReturnButton.addEventListener('click', returnToBrowse);
+
+const myPrintButton = document.getElementById('print');
+myPrintButton.addEventListener('click', sendToPrinter);
+
+const mySaveCommentButton = document.getElementById('saveComment');
+mySaveCommentButton.addEventListener('click', saveComment);
+
+// Get the input field
+const input = document.getElementById("ordernumber");
+
+// Execute a function when the user presses a key on the keyboard
+input.addEventListener("keypress", function(event) {
+  // If the user presses the "Enter" key on the keyboard
+  if (event.key === "Enter") {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("search").click();
+  }
+}); 
+
+// Get the input field
+const inputCustomer = document.getElementById("customer");
+
+// Execute a function when the user presses a key on the keyboard
+inputCustomer.addEventListener("keypress", function(event) {
+  // If the user presses the "Enter" key on the keyboard
+  if (event.key === "Enter") {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("search").click();
+  }
+}); 
+
 
 //For testing ->
 const myShowSearchButton = document.getElementById('showSearch');
