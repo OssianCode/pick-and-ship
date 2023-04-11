@@ -49,9 +49,8 @@ function logOut() {
         sessionStorage.setItem("token", "");
         sessionStorage.setItem("userid", "");
 
-
         //FOR TEST
-        sessionStorage.clear();
+        //sessionStorage.clear();
     
         //Back to start page
         window.location.assign("index.html");
@@ -64,11 +63,12 @@ function logOut() {
 
 function setWelcomeText(user){
     //console.log(user);
-    document.getElementById('messageBox').innerHTML = "Welcome " + user.firstName;
+    document.getElementById('messageBox').innerHTML = `Logged in as ${user.firstName}`;
 } // END WELCOME
 
 //Fetch orders and call listOrdersToTable
 function listOrders(){
+
     orderNumberSearch = document.getElementById('ordernumber').value;
     customerSearch = document.getElementById('customer').value.toLowerCase();
     //console.log("ListOrders by : " + orderNumberSearch + " "  + customerSearch);
@@ -368,6 +368,20 @@ function printLines(oi){
                 ordersToShow[oi].items[b].comment = "";
             }
 
+            if (sessionStorage.getItem(`collectedQty${ordersToShow[oi].orderid}-${b}`) != null){
+                ordersToShow[oi].items[b].collectedQty = sessionStorage.getItem(`collectedQty${ordersToShow[oi].orderid}-${b}`); 
+            }
+            else {
+                ordersToShow[oi].items[b].collectedQty = "";
+            }
+
+            if (sessionStorage.getItem(`collectedBox${ordersToShow[oi].orderid}-${b}`) != null){
+                ordersToShow[oi].items[b].collectedBox = sessionStorage.getItem(`collectedBox${ordersToShow[oi].orderid}-${b}`); 
+            }
+            else {
+                ordersToShow[oi].items[b].collectedBox = "";
+            }
+
         } 
         else {
             document.getElementById('messageBox').innerHTML = "Sorry no session storage!";
@@ -405,8 +419,8 @@ function printLines(oi){
         createTd(ordersToShow[oi].items[b].shelf_pos);
         createTd(ordersToShow[oi].items[b].unit_price);
         createTd(ordersToShow[oi].items[b].qty);
-        createTd("5"); // TODO input
-        createTd(true); // todo checkbox
+        createTdCollectedQty(ordersToShow[oi].items[b].collectedQty, oi, b) //createTd("5"); 
+        createTdCollectedBox(ordersToShow[oi].items[b].collectedBox, oi, b) //createTd(true); 
         createTdComment(ordersToShow[oi].items[b].comment, oi, b); 
 
         // Add ROW to table
@@ -512,6 +526,40 @@ function createTdComment(dataTxt, oi, b){
 
 }
 
+//Create iput for line comment
+function createTdCollectedQty(dataTxt, oi, b){
+
+    rcell = document.createElement("td"); // first td
+
+
+    let inputElem = document.createElement("input");
+    inputElem.setAttribute("type", "number");
+    inputElem.setAttribute("class", "collectedQty");
+    inputElem.setAttribute("id", `collectedQty${ordersToShow[oi].orderid}-${b}`); // ordersToShow[oi].items[b] oi-b
+    inputElem.setAttribute("value", dataTxt);
+
+    rcell.appendChild(inputElem); // add node to td
+    row.appendChild(rcell); // add td to tr   */
+
+}
+
+//Create iput for line comment
+function createTdCollectedBox(dataTxt, oi, b){
+
+    rcell = document.createElement("td"); // first td
+
+
+    let inputElem = document.createElement("input");
+    inputElem.setAttribute("type", "checkbox");
+    inputElem.setAttribute("class", "collectedBox");
+    inputElem.setAttribute("id", `collectedBox${ordersToShow[oi].orderid}-${b}`); // ordersToShow[oi].items[b] oi-b
+    inputElem.setAttribute("value", dataTxt);
+
+    rcell.appendChild(inputElem); // add node to td
+    row.appendChild(rcell); // add td to tr   */
+
+}
+
 
 // SAVE Comments
 function saveComment(){
@@ -523,26 +571,27 @@ function saveComment(){
     for(b = 0;b < ordersToShow[currentOrder].items.length; b++){
 
         const commentToSave = document.getElementById(`comment${ordersToShow[currentOrder].orderid}-${b}`).value;
+        const collectedQtyToSave = document.getElementById(`collectedQty${ordersToShow[currentOrder].orderid}-${b}`).value;
+        const collectedBoxToSave = document.getElementById(`collectedBox${ordersToShow[currentOrder].orderid}-${b}`).value; //ERROR: EMPTY STRING - how to handle true false checkbox TODO
 
         ordersToShow[currentOrder].items[b].comment = commentToSave;
-        console.log(`SAVEd!  comment${ordersToShow[currentOrder].orderid}-${b} ${commentToSave}`);
+        ordersToShow[currentOrder].items[b].collectedQty = collectedQtyToSave;
+        ordersToShow[currentOrder].items[b].collectedBox = collectedBoxToSave;
+
+        console.log(collectedBoxToSave); //TODO FIX
+
+        //console.log(`SAVEd!  comment${ordersToShow[currentOrder].orderid}-${b} ${commentToSave}`);
 
         //SET comment from session storage
         if (window.sessionStorage != "undefined"){
             sessionStorage.setItem(`comment${ordersToShow[currentOrder].orderid}-${b}`, commentToSave); 
-
+            sessionStorage.setItem(`collectedQty${ordersToShow[currentOrder].orderid}-${b}`, collectedQtyToSave); 
+            sessionStorage.setItem(`collectedBox${ordersToShow[currentOrder].orderid}-${b}`, collectedBoxToSave); 
         } 
         else {
             document.getElementById('messageBox').innerHTML = "Sorry no session storage!";
-
         }
-
-
-
-
     }
-
-
 }
 
 function sendToPrinter(){
@@ -630,7 +679,7 @@ inputCustomer.addEventListener("keypress", function(event) {
 }); 
 
 
-//For testing ->
+/*For testing ->
 const myShowSearchButton = document.getElementById('showSearch');
 myShowSearchButton.addEventListener('click', showSearch);
 
@@ -642,4 +691,4 @@ myHideSearchButton.addEventListener('click', hideSearch);
 
 const myHideRowsButton = document.getElementById('hideRows');
 myHideRowsButton.addEventListener('click', hideRows);
-// <-For testing
+*/ //<-For testing

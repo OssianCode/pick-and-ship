@@ -42,16 +42,16 @@
     height: 100%;
   }
   table.search {
-    border: solid 1px;
+    border: none /*solid 1px*/;
     width: 80%;
   }
   table.viewOrder {
-    border: solid 1px;
+    border: none /*solid 1px*/;
     width: 100%;
     
   }
   td.viewOrder {
-    border: solid 1px;
+    border: none /*solid 1px*/;
     width: 33%;
     height: 100%;
     vertical-align: top;
@@ -111,13 +111,12 @@ tr.order{
 
   /*Main section*/
   div.mainbox {
-    border: solid;
-    border-width: 1px;
-    border-color: rgb(43, 54, 56);
+    border: none /*solid 1px*/;
+    /*border-color: rgb(43, 54, 56);*/
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 10px;
+    margin-top: 0px;
     padding-top: 0px;
     padding-bottom: 0px;
   
@@ -143,11 +142,10 @@ tr.order{
   
   /*body section*/
   div.bodybox {
-    border: solid;
-    border-width: 1px;
+    border: none /*solid 1px*/;
     border-color: rgb(61, 255, 126);
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 0px;
+    padding-bottom: 5px;
     width: 100%;
     /*background-color: rgb(239, 248, 248);*/
     margin-left: auto;
