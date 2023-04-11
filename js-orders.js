@@ -15,6 +15,7 @@ let row; // create header row
 let rcell; // introduce td
 let hcell; // first header
 let node1;
+let currentOrder;
 
 
 
@@ -47,6 +48,10 @@ function logOut() {
     if (window.sessionStorage != "undefined"){
         sessionStorage.setItem("token", "");
         sessionStorage.setItem("userid", "");
+
+
+        //FOR TEST
+        sessionStorage.clear();
     
         //Back to start page
         window.location.assign("index.html");
@@ -146,7 +151,7 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
         
         if (i == 0){
             row = document.createElement("tr"); // create header row
-            row.className = ("orderHeader");
+            row.className = "orderHeader";
 
             createTh("Order number");
             createTh("Customer id");
@@ -162,7 +167,7 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
 
         // CREATE tr ROW
         row = document.createElement("tr"); // create row
-        row.className = ("order");
+        row.className = "order";
 
 
         createTd(ordersToShow[i].orderid);
@@ -242,6 +247,7 @@ function createTdButton(dataTxt){
     row.appendChild(rcell); // add td to tr   */
 
 }
+
 function createTh(dataTxt){
     hcell = document.createElement("th"); // second header
     node1 = document.createTextNode(dataTxt); // insert text node
@@ -274,6 +280,9 @@ function openOrder(oi){
     showRows();
     hideSearch();
 
+    //set to global variable
+    currentOrder = oi;
+
     document.getElementById("orderRowWindow").innerHTML = "";
     document.getElementById("orderDetailsHeader").innerHTML = "";
 
@@ -291,7 +300,7 @@ function openOrder(oi){
     for(b = 0;b < headers.length; b++){
 
         row = document.createElement("tr"); // create header row
-        row.className = ("orderDetails");
+        row.className = "orderDetails";
         createTh(headers[b]);
 
         switch (headers[b]){
@@ -331,13 +340,15 @@ function openOrder(oi){
     //Customer comment
     document.getElementById("orderCommentHeader").innerHTML = ordersToShow[oi].comment;
 
-
+    // create table for order lines 
     printLines(oi);
 
 }
 
 
 function printLines(oi){
+
+    document.getElementById("orderindex").innerHTML = oi;
 
     // Table 
     table = document.createElement("table"); // create table element
@@ -346,10 +357,28 @@ function printLines(oi){
     for(b = 0;b < ordersToShow[oi].items.length; b++){
 
         //console.log(`For item lines ${b} ${ordersToShow[oi].items[b].product}`);
-        
+
+        //Get comment from session storage
+        if (window.sessionStorage != "undefined"){
+
+            if (sessionStorage.getItem(`comment${ordersToShow[oi].orderid}-${b}`) != null){
+                ordersToShow[oi].items[b].comment = sessionStorage.getItem(`comment${ordersToShow[oi].orderid}-${b}`); 
+            }
+            else {
+                ordersToShow[oi].items[b].comment = "";
+            }
+
+        } 
+        else {
+            document.getElementById('messageBox').innerHTML = "Sorry no session storage!";
+
+        }
+
+
+
         if (b == 0){
             row = document.createElement("tr"); // create header row
-            row.className = ("orderHeader");
+            row.className = "orderHeader";
 
             createTh("Item");
             createTh("Supplier code");
@@ -367,7 +396,7 @@ function printLines(oi){
 
         // CREATE tr ROW
         row = document.createElement("tr"); // create row
-        row.className = ("order");
+        row.className = "order";
 
         createTd(ordersToShow[oi].items[b].code);
         createTd(ordersToShow[oi].items[b].suppliercode);
@@ -378,12 +407,86 @@ function printLines(oi){
         createTd(ordersToShow[oi].items[b].qty);
         createTd("5"); // TODO input
         createTd(true); // todo checkbox
-        createTd("Add comment here"); // todo input
+        createTdComment(ordersToShow[oi].items[b].comment, oi, b); 
 
         // Add ROW to table
         table.appendChild(row);
 
     }
+
+    //total line
+    // CREATE tr ROW
+    row = document.createElement("tr"); // create row
+    row.className = "orderTotal";
+
+    //TD1 empty
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "3";
+    rcell.className = "orderTotal";
+    //node1 = document.createTextNode(dataTxt); // value node
+    //rcell.appendChild(node1); // add node to td
+    row.appendChild(rcell); // add td to tr   
+
+    //TD2 TOTAL
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "1";
+    rcell.className = "orderTotal";
+    node1 = document.createTextNode("Total price"); // value node
+    rcell.appendChild(node1); // add node to td
+    row.appendChild(rcell); // add td to tr   
+
+    //TD3 TOTAL €
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "4";
+    rcell.className = "orderTotal";
+    node1 = document.createTextNode(`${ordersToShow[oi].totalprice} €`); // value node
+    rcell.appendChild(node1); // add node to td
+    row.appendChild(rcell); // add td to tr   
+
+    //TD4 FULLY COLLECTED
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "1";
+    rcell.className = "orderTotalNotCollected"; //"orderTotalCollected" red? blue?
+    node1 = document.createTextNode(""); // value node FULLY COLLECTED?
+    rcell.appendChild(node1); // add node to td
+    row.appendChild(rcell); // add td to tr   
+
+    //TD5 empty
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "1";
+    rcell.className = "orderTotal";
+    //node1 = document.createTextNode(""); // value node FULLY COLLECTED?
+    //rcell.appendChild(node1); // add node to td
+    row.appendChild(rcell); // add td to tr   
+
+
+    table.appendChild(row);
+
+
+
+    //Save button
+    // CREATE tr ROW
+    row = document.createElement("tr"); // create row
+    row.className = "savebuttonrow";
+
+    //TD1 empty
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "10";
+    //node1 = document.createTextNode(dataTxt); // value node
+    //rcell.appendChild(node1); // add node to td
+
+    let inputElem = document.createElement("input");
+    inputElem.setAttribute("type", "button");
+    inputElem.setAttribute("class", "saveComment");
+    inputElem.setAttribute("id", "saveComment"); // ordersToShow[oi].items[b] oi-b
+    inputElem.setAttribute("value", "Save");
+
+    inputElem.setAttribute("onclick", `saveComment()`);
+
+
+    rcell.appendChild(inputElem); // add node to td
+    row.appendChild(rcell); // add td to tr   */
+    table.appendChild(row);
 
     // print table to right div
     const element = document.getElementById("orderRowWindow");
@@ -392,15 +495,59 @@ function printLines(oi){
 
 }
 
-//TODO SAVE
-function saveComment(){
+//Create iput for line comment
+function createTdComment(dataTxt, oi, b){
 
-    console.log("SAVE!");
+    rcell = document.createElement("td"); // first td
+
+
+    let inputElem = document.createElement("input");
+    inputElem.setAttribute("type", "txt");
+    inputElem.setAttribute("class", "comment");
+    inputElem.setAttribute("id", `comment${ordersToShow[oi].orderid}-${b}`); // ordersToShow[oi].items[b] oi-b
+    inputElem.setAttribute("value", dataTxt);
+
+    rcell.appendChild(inputElem); // add node to td
+    row.appendChild(rcell); // add td to tr   */
+
 }
 
-//TODO PRINT
+
+// SAVE Comments
+function saveComment(){
+
+    //let oi = Number(document.getElementById('orderindex').innerHTML); 
+    //console.log(`SAVE ORDER INDEX : ${oi}`);  
+    //console.log(`SAVE current order index ${currentOrder}`);
+
+    for(b = 0;b < ordersToShow[currentOrder].items.length; b++){
+
+        const commentToSave = document.getElementById(`comment${ordersToShow[currentOrder].orderid}-${b}`).value;
+
+        ordersToShow[currentOrder].items[b].comment = commentToSave;
+        console.log(`SAVEd!  comment${ordersToShow[currentOrder].orderid}-${b} ${commentToSave}`);
+
+        //SET comment from session storage
+        if (window.sessionStorage != "undefined"){
+            sessionStorage.setItem(`comment${ordersToShow[currentOrder].orderid}-${b}`, commentToSave); 
+
+        } 
+        else {
+            document.getElementById('messageBox').innerHTML = "Sorry no session storage!";
+
+        }
+
+
+
+
+    }
+
+
+}
+
 function sendToPrinter(){
-    console.log("PRINT!");
+    //console.log("PRINT!");
+    window.print();
 }
 
 
@@ -451,8 +598,8 @@ myReturnButton.addEventListener('click', returnToBrowse);
 const myPrintButton = document.getElementById('print');
 myPrintButton.addEventListener('click', sendToPrinter);
 
-const mySaveCommentButton = document.getElementById('saveComment');
-mySaveCommentButton.addEventListener('click', saveComment);
+//const mySaveCommentButton = document.getElementById('saveComment');
+//mySaveCommentButton.addEventListener('click', saveComment);
 
 // Get the input field
 const input = document.getElementById("ordernumber");
