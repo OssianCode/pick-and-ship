@@ -211,7 +211,7 @@ function createOrderRow(orders, i){
 
     // ORDER FULLY COLLECTED HANDLING
     if (sessionStorage.getItem(`collectedBox${orders[i].orderid}`) != null){
-        console.log(`STORAGE read new order collected?`);
+        //console.log(`STORAGE read new order collected?`);
         orders[i].collectedBox = sessionStorage.getItem(`collectedBox${orders[i].orderid}`); 
 
     }
@@ -226,7 +226,7 @@ function createOrderRow(orders, i){
         orders[i].deliverydate, 
         orders[i].products,
         itemsString, 
-        orders[i].collectedBox, //FIX TODO fixed?
+        orders[i].collectedBox, 
         orders[i].comment,
         orders[i].invaddr,
         orders[i].delivaddr,
@@ -245,7 +245,6 @@ function createTd(dataTxt){
 
 }
 
-//TODO 
 function createTdCollected(dataTxt, setId){
 
     rcell = document.createElement("td"); // first td
@@ -814,7 +813,7 @@ myHideSearchButton.addEventListener('click', hideSearch);
 
 const myHideRowsButton = document.getElementById('hideRows');
 myHideRowsButton.addEventListener('click', hideRows);
-*/
+
 
 function clearStorage(){
     //FOR TEST
@@ -825,4 +824,4 @@ function clearStorage(){
 const myClearStorageButton = document.getElementById('clearStorage');
 myClearStorageButton.addEventListener('click', clearStorage);
 
-//<-For testing
+//<-For testing*/
