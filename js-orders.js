@@ -75,6 +75,7 @@ function listOrders(){
     fetch('https://www.cc.puv.fi/~asa/cgi-bin/fetchOrders.py')
         .then(res => res.json())
         .then(orders => listOrdersToTable(orders, orderNumberSearch, customerSearch));
+
 }
 
 function Order(orderid, customerid, customer, deliverydate, items, itemsString, collected, 
@@ -85,7 +86,7 @@ function Order(orderid, customerid, customer, deliverydate, items, itemsString, 
     this.deliverydate = deliverydate;
     this.items = items;
     this.itemsString = itemsString;
-    this.collected = collected;
+    this.collectedBox = collected;
     this.comment = comment;
     this.invaddr = invaddr;
     this.delivaddr = delivaddr;
@@ -175,7 +176,9 @@ function listOrdersToTable(orders, orderNumberSearch, customerSearch){
         createTd(ordersToShow[i].customer);
         createTd(ordersToShow[i].deliverydate);
         createTd(ordersToShow[i].itemsString);
-        createTd(ordersToShow[i].collected);
+        /*createTdCollectedBox(ordersToShow[i].collectedBox, `collectedBox${ordersToShow[i].orderid}-${b}`); */  // Do not want checkbox
+        /*createTd(ordersToShow[i].collectedBox);*/
+        createTdCollected(ordersToShow[i].collectedBox, `browseCollectedBox${ordersToShow[i].orderid}`);
         createTd(ordersToShow[i].comment);
         createTdButton(i);
 
@@ -206,13 +209,24 @@ function createOrderRow(orders, i){
         }
     }
 
+    // ORDER FULLY COLLECTED HANDLING
+    if (sessionStorage.getItem(`collectedBox${orders[i].orderid}`) != null){
+        console.log(`STORAGE read new order collected?`);
+        orders[i].collectedBox = sessionStorage.getItem(`collectedBox${orders[i].orderid}`); 
+
+    }
+    else {
+        //console.log(`Trying to read NULL if fully collected ${ordersToShow[oi].orderid}-${b}`);
+        orders[i].collectedBox = false;
+    }
+
     const newOrder = new Order(orders[i].orderid, 
         orders[i].customerid, 
         orders[i].customer, 
         orders[i].deliverydate, 
         orders[i].products,
         itemsString, 
-        true,
+        orders[i].collectedBox, //FIX TODO fixed?
         orders[i].comment,
         orders[i].invaddr,
         orders[i].delivaddr,
@@ -228,6 +242,28 @@ function createTd(dataTxt){
     node1 = document.createTextNode(dataTxt); // value node
     rcell.appendChild(node1); // add node to td
     row.appendChild(rcell); // add td to tr   
+
+}
+
+//TODO 
+function createTdCollected(dataTxt, setId){
+
+    rcell = document.createElement("td"); // first td
+    rcell.setAttribute("id", setId);
+
+    if (dataTxt == "true"){ // IF CHECKED TRUE
+        rcell.className = "orderTotal"; // Blue 
+        node1 = document.createTextNode("Yes"); // value node
+
+    }   
+    else {
+        rcell.className = "orderTotalNotCollected"; //Red
+        node1 = document.createTextNode("No"); // value node
+    }
+
+    rcell.appendChild(node1); // add node to td
+    row.appendChild(rcell); // add td to tr  
+
 
 }
 
@@ -353,28 +389,41 @@ function printLines(oi){
     // Table 
     table = document.createElement("table"); // create table element
 
+    // ORDER FULLY COLLECTED HANDLING
+    if (sessionStorage.getItem(`collectedBox${ordersToShow[oi].orderid}`) != null){
+        //console.log(`STORAGE read fully collected ${ordersToShow[oi].orderid}-${b}`);
+        //console.log("ORDER FULLY COLLECTED? " + sessionStorage.getItem("collectedBox" + ordersToShow[oi].orderid));
+        ordersToShow[oi].collectedBox = sessionStorage.getItem(`collectedBox${ordersToShow[oi].orderid}`); 
+
+    }
+    else {
+        //console.log(`Trying to read NULL if fully collected ${ordersToShow[oi].orderid}-${b}`);
+        ordersToShow[oi].collectedBox = false;
+    }
+
     // print lines to table
     for(b = 0;b < ordersToShow[oi].items.length; b++){
 
         //console.log(`For item lines ${b} ${ordersToShow[oi].items[b].product}`);
 
-        //Get comment from session storage
+        //Get data from session storage
         if (window.sessionStorage != "undefined"){
 
+            //Line comment
             if (sessionStorage.getItem(`comment${ordersToShow[oi].orderid}-${b}`) != null){
                 ordersToShow[oi].items[b].comment = sessionStorage.getItem(`comment${ordersToShow[oi].orderid}-${b}`); 
             }
             else {
                 ordersToShow[oi].items[b].comment = "";
             }
-
+            //Collected Qty
             if (sessionStorage.getItem(`collectedQty${ordersToShow[oi].orderid}-${b}`) != null){
                 ordersToShow[oi].items[b].collectedQty = sessionStorage.getItem(`collectedQty${ordersToShow[oi].orderid}-${b}`); 
             }
             else {
                 ordersToShow[oi].items[b].collectedQty = "";
             }
-
+            //Line collected fully
             if (sessionStorage.getItem(`collectedBox${ordersToShow[oi].orderid}-${b}`) != null){
 
                 //console.log(`STORAGE read fully collected ${ordersToShow[oi].orderid}-${b}`);
@@ -431,8 +480,8 @@ function printLines(oi){
         createTd(ordersToShow[oi].items[b].shelf_pos);
         createTd(ordersToShow[oi].items[b].unit_price);
         createTd(ordersToShow[oi].items[b].qty);
-        createTdCollectedQty(ordersToShow[oi].items[b].collectedQty, oi, b) 
-        createTdCollectedBox(ordersToShow[oi].items[b].collectedBox, oi, b) //TODO FIX
+        createTdCollectedQty(ordersToShow[oi].items[b].collectedQty, oi, b); 
+        createTdCollectedBox(ordersToShow[oi].items[b].collectedBox, `collectedBox${ordersToShow[oi].orderid}-${b}`  /*oi, b*/ ); 
         createTdComment(ordersToShow[oi].items[b].comment, oi, b); 
 
         // Add ROW to table
@@ -470,39 +519,27 @@ function printLines(oi){
     row.appendChild(rcell); // add td to tr   
 
 
-//************** TODO *******************    
     //TD4 FULLY COLLECTED
+    // checkbox order collected
     rcell = document.createElement("td"); // first td
     rcell.colSpan = "1";
-    rcell.className = "orderTotalNotCollected"; //"orderTotalCollected" red? blue?
-    node1 = document.createTextNode(""); // value node FULLY COLLECTED?
-    rcell.appendChild(node1); // add node to td
-    row.appendChild(rcell); // add td to tr   
+    rcell.setAttribute("id", `collectedTd${ordersToShow[oi].orderid}`);
 
+    let boxElem = document.createElement("input");
+    boxElem.setAttribute("type", "checkbox");
+    boxElem.setAttribute("class", "collectedBox");
+    boxElem.setAttribute("id", `collectedBox${ordersToShow[oi].orderid}`); // by ordernumber only
 
-/*
-// checkbox order collected
-    rcell = document.createElement("td"); // first td
-
-    //console.log(`Create collectex box ${ordersToShow[oi].orderid}-${b} ${dataTxt}`);
-
-    let inputElem = document.createElement("input");
-    inputElem.setAttribute("type", "checkbox");
-    inputElem.setAttribute("class", "collectedBox");
-    inputElem.setAttribute("id", `collectedBox${ordersToShow[oi].orderid}-${b}`); // ordersToShow[oi].items[b] oi-b
-    if (dataTxt == "true"){ // IF CHECKED TRUE
-        inputElem.setAttribute("checked", true);
+    if (ordersToShow[oi].collectedBox == "true"){ // IF CHECKED TRUE
+        boxElem.setAttribute("checked", true);
+        rcell.className = "orderTotal"; // Blue 
+    }
+    else {
+        rcell.className = "orderTotalNotCollected"; //Red
     }
 
-    rcell.appendChild(inputElem); // add node to td
+    rcell.appendChild(boxElem); // add node to td
     row.appendChild(rcell); // add td to tr 
-
-*/
-
-//*********TODO********* 
-
-
-
 
 
     //TD5 
@@ -526,21 +563,35 @@ function printLines(oi){
     //TD1 empty
     rcell = document.createElement("td"); // first td
     rcell.colSpan = "10";
-    //node1 = document.createTextNode(dataTxt); // value node
-    //rcell.appendChild(node1); // add node to td
-
     let inputElem = document.createElement("input");
     inputElem.setAttribute("type", "button");
     inputElem.setAttribute("class", "saveComment");
     inputElem.setAttribute("id", "saveComment"); // ordersToShow[oi].items[b] oi-b
     inputElem.setAttribute("value", "Save");
-
     inputElem.setAttribute("onclick", `saveComment()`);
-
-
     rcell.appendChild(inputElem); // add node to td
     row.appendChild(rcell); // add td to tr   */
     table.appendChild(row);
+
+
+    //Return button
+    // CREATE tr ROW
+    row = document.createElement("tr"); // create row
+    row.className = "savebuttonrow";
+
+    //TD1  <input class="linesHeader" type="button" id="return" value="Return">
+    rcell = document.createElement("td"); // first td
+    rcell.colSpan = "10";
+    inputElem = document.createElement("input");
+    inputElem.setAttribute("type", "button");
+    inputElem.setAttribute("class", "saveComment");
+    inputElem.setAttribute("id", "return2"); // ordersToShow[oi].items[b] oi-b
+    inputElem.setAttribute("value", "Return");
+    inputElem.setAttribute("onclick", `returnToBrowse()`);
+    rcell.appendChild(inputElem); // add node to td
+    row.appendChild(rcell); // add td to tr   */
+    table.appendChild(row);
+
 
     // print table to right div
     const element = document.getElementById("orderRowWindow");
@@ -584,7 +635,7 @@ function createTdCollectedQty(dataTxt, oi, b){
 }
 
 //Create iput for line comment
-function createTdCollectedBox(dataTxt, oi, b){
+function createTdCollectedBox(dataTxt, setId /*oi, b*/ ){
 
     rcell = document.createElement("td"); // first td
 
@@ -593,7 +644,7 @@ function createTdCollectedBox(dataTxt, oi, b){
     let inputElem = document.createElement("input");
     inputElem.setAttribute("type", "checkbox");
     inputElem.setAttribute("class", "collectedBox");
-    inputElem.setAttribute("id", `collectedBox${ordersToShow[oi].orderid}-${b}`); // ordersToShow[oi].items[b] oi-b
+    inputElem.setAttribute("id", setId /*`collectedBox${ordersToShow[oi].orderid}-${b}`*/ ); // ordersToShow[oi].items[b] oi-b
     if (dataTxt == "true"){ // IF CHECKED TRUE
         inputElem.setAttribute("checked", true);
     }
@@ -611,24 +662,50 @@ function saveComment(){
     //console.log(`SAVE ORDER INDEX : ${oi}`);  
     //console.log(`SAVE current order index ${currentOrder}`);
 
+    const collectedBoxOrderToSave = document.getElementById(`collectedBox${ordersToShow[currentOrder].orderid}`).checked; 
+    ordersToShow[currentOrder].collectedBox = collectedBoxOrderToSave;
+
+    //console.log(`SAVE  ${collectedBoxOrderToSave}`);
+
+    document.getElementById(`collectedTd${ordersToShow[currentOrder].orderid}`).removeAttribute("class");
+    
+    if (collectedBoxOrderToSave == true){
+
+        //console.log(`SAVE  Was true, will set blue`);
+        document.getElementById(`collectedTd${ordersToShow[currentOrder].orderid}`).setAttribute("class", "orderTotal"); // BLUE
+        document.getElementById(`browseCollectedBox${ordersToShow[currentOrder].orderid}`).setAttribute("class", "orderTotal"); // BLUE
+        document.getElementById(`browseCollectedBox${ordersToShow[currentOrder].orderid}`).innerHTML = "Yes";
+
+    }
+    else {
+        //console.log(`SAVE  NOT true, will set RED`);
+        document.getElementById(`collectedTd${ordersToShow[currentOrder].orderid}`).setAttribute("class", "orderTotalNotCollected"); // RED
+        document.getElementById(`browseCollectedBox${ordersToShow[currentOrder].orderid}`).setAttribute("class", "orderTotalNotCollected"); // RED
+        document.getElementById(`browseCollectedBox${ordersToShow[currentOrder].orderid}`).innerHTML = "No";
+    }
+
+    //SET data to session storage
+    if (window.sessionStorage != "undefined"){
+        sessionStorage.setItem(`collectedBox${ordersToShow[currentOrder].orderid}`, collectedBoxOrderToSave); 
+    } 
+    else {
+        document.getElementById('messageBox').innerHTML = "Sorry no session storage!";
+    }
+
     for(b = 0;b < ordersToShow[currentOrder].items.length; b++){
 
         const commentToSave = document.getElementById(`comment${ordersToShow[currentOrder].orderid}-${b}`).value;
         const collectedQtyToSave = document.getElementById(`collectedQty${ordersToShow[currentOrder].orderid}-${b}`).value;
-        const collectedBoxToSave = document.getElementById(`collectedBox${ordersToShow[currentOrder].orderid}-${b}`).checked; //ERROR: EMPTY STRING - how to handle true false checkbox TODO
-
-        //console.log(`Collected box${collectedBoxToSave} collectedBox${ordersToShow[currentOrder].orderid}-${b}`); //TODO FIX
-
+        const collectedBoxToSave = document.getElementById(`collectedBox${ordersToShow[currentOrder].orderid}-${b}`).checked; 
 
         ordersToShow[currentOrder].items[b].comment = commentToSave;
         ordersToShow[currentOrder].items[b].collectedQty = collectedQtyToSave;
         ordersToShow[currentOrder].items[b].collectedBox = collectedBoxToSave;
 
         
-
         //console.log(`SAVEd!  comment${ordersToShow[currentOrder].orderid}-${b} ${commentToSave}`);
 
-        //SET comment from session storage
+        //SET data to session storage
         if (window.sessionStorage != "undefined"){
             sessionStorage.setItem(`comment${ordersToShow[currentOrder].orderid}-${b}`, commentToSave); 
             sessionStorage.setItem(`collectedQty${ordersToShow[currentOrder].orderid}-${b}`, collectedQtyToSave); 
